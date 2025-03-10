@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的个人博客</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            background-color: #fff;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #007bff;
+        }
+
+        /* 轮播图样式 */
+        .carousel {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .carousel-inner {
+            height: 100%;
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-controls button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.7);
+            border: none;
+            padding: 1rem;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .carousel-prev {
+            left: 1rem;
+        }
+
+        .carousel-next {
+            right: 1rem;
+        }
+
+        /* 个人简介样式 */
+        .profile {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-info h1 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        /* 名人名言样式 */
+        .quotes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .quote-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .quote-text {
+            font-style: italic;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .quote-author {
+            color: #7f8c8d;
+            text-align: right;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .carousel {
+                height: 300px;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+        }
+
+        /* AI对话框样式 */
+        .ai-chat-section {
+            background: #f8f9fa;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .chat-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 1.5rem 2rem;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+        }
+
+        .chat-header h2 {
+            margin: 0;
+            color: #1a1a1a;
+            font-size: 1.5rem;
+        }
+
+        .model-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .chat-box {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+
+        .messages {
+            flex-grow: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            max-width: 80%;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+            align-self: flex-end;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .message.user .avatar {
+            background: #28a745;
+        }
+
+        .message-content {
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            background: #f8f9fa;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: #007bff;
+            color: white;
+        }
+
+        .message-content p {
+            margin: 0;
+        }
+
+        .message-content p + p {
+            margin-top: 0.5rem;
+        }
+
+        .input-area {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            background: #fff;
+        }
+
+        .input-area textarea {
+            flex-grow: 1;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            resize: none;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.5;
+            max-height: 150px;
+            transition: all 0.3s ease;
+        }
+
+        .input-area textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+        }
+
+        .input-area button {
+            padding: 1rem;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .input-area button:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .input-area button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* 加载动画更新 */
+        .typing-indicator {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #007bff;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+            opacity: 0.4;
+        }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                margin: 0 1rem;
+                border-radius: 10px;
+            }
+
+            .chat-box {
+                height: 400px;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
+
+        /* 知识库管理样式 */
+        .chat-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            background: #f0f0f0;
+        }
+
+        .action-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .knowledge-panel {
+            display: none;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 1.5rem;
+        }
+
+        .knowledge-panel.active {
+            display: block;
+        }
+
+        .knowledge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .knowledge-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .knowledge-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .knowledge-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .knowledge-item-title {
+            font-weight: 500;
+        }
+
+        .knowledge-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .knowledge-form {
+            display: none;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .knowledge-form.active {
+            display: block;
+        }
+
+        .knowledge-form textarea {
+            width: 100%;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            resize: vertical;
+        }
+
+        .knowledge-form input[type="text"] {
+            width: 200px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-right: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .form-actions button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .form-actions button:first-of-type {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .form-actions button:last-of-type {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        /* 文件上传样式 */
+        .file-upload-form {
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        .file-upload-form.active {
+            display: block;
+        }
+
+        .file-drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-drop-zone:hover,
+        .file-drop-zone.drag-over {
+            border-color: #007bff;
+            background: rgba(0,123,255,0.05);
+        }
+
+        .file-drop-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-drop-content svg {
+            width: 48px;
+            height: 48px;
+            color: #007bff;
+        }
+
+        .file-types {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .file-list {
+            margin-top: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-item-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .file-item-name {
+            font-weight: 500;
+        }
+
+        .file-item-size {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .file-item-status {
+            font-size: 0.9rem;
+        }
+
+        .file-item-status.success {
+            color: #28a745;
+        }
+
+        .file-item-status.error {
+            color: #dc3545;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: #007bff;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="#home">首页</a>
+            <a href="#about">关于我</a>
+            <a href="#blog">博客</a>
+            <a href="#contact">联系我</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 轮播图 -->
+        <div class="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item">
+                    <img src="images/1.jpg" alt="个人图片1">
+                </div>
+                <div class="carousel-item">
+                    <img src="images/2.jpg" alt="个人图片2">
+                </div>
+                <div class="carousel-item">
+                    <img src="images/3.jpg" alt="个人图片3">
+                </div>
+            </div>
+            <div class="carousel-controls">
+                <button class="carousel-prev">❮</button>
+                <button class="carousel-next">❯</button>
+            </div>
+        </div>
+
+        <!-- 个人简介 -->
+        <section class="profile">
+            <div class="profile-header">
+                <img src="images/4.jpg" alt="个人头像" class="profile-avatar">
+                <div class="profile-info">
+                    <h1>卢良强</h1>
+                    <p>区块链开发者 / 设计师 / 创作者</p>
+                </div>
+            </div>
+            <div class="profile-content">
+                <p>大家好！我是一名充满激情的区块链开发者，专注于创建美观且用户友好的网站。我热爱编程、设计和创新，并且一直在探索新的技术和创意。在这里，我会分享我的编程经验、设计灵感以及生活感悟。</p>
+            </div>
+        </section>
+
+        <!-- 名人名言 -->
+        <div class="quotes">
+            <div class="quote-card">
+                <p class="quote-text">"生命不是要超越别人，而是要超越自己。"</p>
+                <p class="quote-author">— 比尔·盖茨</p>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">"创新区分领导者和跟随者。"</p>
+                <p class="quote-author">— 史蒂夫·乔布斯</p>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">"简单是最终的复杂。"</p>
+                <p class="quote-author">— 达芬奇</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI对话框 -->
+    <section class="ai-chat-section">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <h2>AI助手</h2>
+                    <span class="model-info">Powered by Deepseek-r1</span>
+                </div>
+                <div class="chat-actions">
+                    <button id="toggleKnowledge" class="action-button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        知识库
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 知识库管理面板 -->
+            <div class="knowledge-panel" id="knowledgePanel">
+                <div class="knowledge-header">
+                    <h3>知识库管理</h3>
+                    <div class="knowledge-actions">
+                        <button id="addKnowledge" class="action-button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 4v16m8-8H4" />
+                            </svg>
+                            添加知识
+                        </button>
+                        <button id="uploadFile" class="action-button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                            上传文件
+                        </button>
+                    </div>
+                </div>
+                <div class="knowledge-content">
+                    <!-- 文件上传表单 -->
+                    <div class="file-upload-form" id="fileUploadForm">
+                        <div class="file-drop-zone" id="fileDropZone">
+                            <div class="file-drop-content">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                </svg>
+                                <p>拖放文件到这里或点击上传</p>
+                                <p class="file-types">支持的格式：PDF, TXT, DOCX</p>
+                            </div>
+                            <input type="file" id="fileInput" accept=".pdf,.txt,.docx" multiple hidden>
+                        </div>
+                        <div class="file-list" id="fileList"></div>
+                    </div>
+                    
+                    <div class="knowledge-list" id="knowledgeList">
+                        <!-- 知识条目将在这里动态添加 -->
+                    </div>
+                    <!-- 添加知识表单 -->
+                    <div class="knowledge-form" id="knowledgeForm">
+                        <textarea id="knowledgeInput" placeholder="输入要添加的知识..." rows="4"></textarea>
+                        <div class="form-actions">
+                            <input type="text" id="knowledgeTitle" placeholder="知识标题">
+                            <button id="saveKnowledge">保存</button>
+                            <button id="cancelKnowledge">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-box" id="chatBox">
+                <div class="messages" id="messages">
+                    <div class="message bot">
+                        <div class="avatar">AI</div>
+                        <div class="message-content">
+                            <p>👋 你好！我是你的AI助手。我可以帮你解答问题、讨论想法或者提供建议。</p>
+                            <p>试着问我一些问题吧！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-area">
+                <textarea id="userInput" placeholder="输入你的问题..." rows="1"></textarea>
+                <button id="sendMessage">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 轮播图功能
+        const carousel = document.querySelector('.carousel-inner');
+        const items = document.querySelectorAll('.carousel-item');
+        const prevBtn = document.querySelector('.carousel-prev');
+        const nextBtn = document.querySelector('.carousel-next');
+        
+        let currentIndex = 0;
+        const totalItems = items.length;
+
+        function updateCarousel() {
+            carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % totalItems;
+            updateCarousel();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+            updateCarousel();
+        }
+
+        // 添加事件监听器
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        // 自动轮播
+        setInterval(nextSlide, 5000);
+
+        // AI对话框功能
+        const messages = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendMessage');
+
+        // 添加消息到对话框
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.innerHTML = `
+                <div class="avatar">${isUser ? '你' : 'AI'}</div>
+                <div class="message-content">
+                    <p>${content}</p>
+                </div>
+            `;
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // 添加加载动画
+        function addTypingIndicator() {
+            const indicator = document.createElement('div');
+            indicator.className = 'message bot';
+            indicator.innerHTML = `
+                <div class="avatar">AI</div>
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            messages.appendChild(indicator);
+            messages.scrollTop = messages.scrollHeight;
+            return indicator;
+        }
+
+        /**
+         * 知识库管理功能
+         * 这部分代码负责处理知识库的所有交互功能，包括：
+         * 1. 显示/隐藏知识库面板
+         * 2. 添加新知识
+         * 3. 保存知识到本地存储
+         * 4. 显示知识列表
+         * 5. 删除知识
+         */
+
+        // ====== DOM元素获取 ======
+        // 知识库开关按钮：控制知识库面板的显示和隐藏
+        const toggleKnowledge = document.getElementById('toggleKnowledge');
+        
+        // 知识库主面板：包含所有知识库相关的内容
+        const knowledgePanel = document.getElementById('knowledgePanel');
+        
+        // "添加知识"按钮：点击显示添加知识的表单
+        const addKnowledge = document.getElementById('addKnowledge');
+        
+        // 添加知识的表单容器：包含标题和内容输入框
+        const knowledgeForm = document.getElementById('knowledgeForm');
+        
+        // 知识内容输入框：用于输入详细的知识内容
+        const knowledgeInput = document.getElementById('knowledgeInput');
+        
+        // 知识标题输入框：用于输入知识的标题
+        const knowledgeTitle = document.getElementById('knowledgeTitle');
+        
+        // 保存按钮：点击将新知识保存到知识库
+        const saveKnowledge = document.getElementById('saveKnowledge');
+        
+        // 取消按钮：点击关闭添加知识表单
+        const cancelKnowledge = document.getElementById('cancelKnowledge');
+        
+        // 知识列表容器：显示所有已添加的知识
+        const knowledgeList = document.getElementById('knowledgeList');
+
+        // ====== 知识库数据管理 ======
+        /**
+         * 知识库数组：存储所有知识条目
+         * 从localStorage读取已存储的知识库数据
+         * 如果没有数据则初始化为空数组
+         */
+        let knowledgeBase = JSON.parse(localStorage.getItem('knowledgeBase')) || [];
+
+        // ====== 事件监听器 ======
+        /**
+         * 知识库面板显示/隐藏控制
+         * 点击toggleKnowledge按钮时触发
+         */
+        toggleKnowledge.addEventListener('click', () => {
+            // 切换面板的显示状态
+            knowledgePanel.classList.toggle('active');
+            // 重新渲染知识列表
+            renderKnowledgeList();
+        });
+
+        /**
+         * 显示添加知识表单
+         * 点击"添加知识"按钮时触发
+         */
+        addKnowledge.addEventListener('click', () => {
+            // 显示表单
+            knowledgeForm.classList.add('active');
+            // 将焦点设置到输入框
+            knowledgeInput.focus();
+        });
+
+        /**
+         * 取消添加知识
+         * 点击"取消"按钮时触发
+         */
+        cancelKnowledge.addEventListener('click', () => {
+            // 隐藏表单
+            knowledgeForm.classList.remove('active');
+            // 清空输入框
+            knowledgeInput.value = '';
+            knowledgeTitle.value = '';
+        });
+
+        /**
+         * 保存新知识
+         * 点击"保存"按钮时触发
+         */
+        saveKnowledge.addEventListener('click', () => {
+            // 获取并清理输入的内容
+            const content = knowledgeInput.value.trim();
+            const title = knowledgeTitle.value.trim();
+            
+            // 确保标题和内容都不为空
+            if (content && title) {
+                // 创建新的知识对象
+                const knowledge = {
+                    id: Date.now(),          // 使用时间戳作为唯一ID
+                    title,                   // 知识标题
+                    content,                 // 知识内容
+                    timestamp: new Date().toISOString()  // 创建时间
+                };
+                
+                // 添加到知识库数组
+                knowledgeBase.push(knowledge);
+                // 将知识库保存到localStorage
+                localStorage.setItem('knowledgeBase', JSON.stringify(knowledgeBase));
+                
+                // 清空表单
+                knowledgeForm.classList.remove('active');
+                knowledgeInput.value = '';
+                knowledgeTitle.value = '';
+                // 更新知识列表显示
+                renderKnowledgeList();
+            }
+        });
+
+        /**
+         * 渲染知识列表
+         * 将知识库中的所有知识显示到页面上
+         */
+        function renderKnowledgeList() {
+            knowledgeList.innerHTML = knowledgeBase.map(item => `
+                <div class="knowledge-item" data-id="${item.id}">
+                    <div class="knowledge-item-header">
+                        <span class="knowledge-item-title">${item.title}</span>
+                        <div class="knowledge-item-actions">
+                            <button onclick="deleteKnowledge(${item.id})" class="action-button">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <path d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p>${item.content}</p>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * 删除知识
+         * @param {number} id - 要删除的知识的ID
+         */
+        function deleteKnowledge(id) {
+            // 从知识库中过滤掉要删除的知识
+            knowledgeBase = knowledgeBase.filter(item => item.id !== id);
+            // 更新localStorage中的数据
+            localStorage.setItem('knowledgeBase', JSON.stringify(knowledgeBase));
+            // 重新渲染知识列表
+            renderKnowledgeList();
+        }
+
+        /**
+         * 修改发送消息到Ollama的函数，加入知识库内容
+         * @param {string} message - 用户输入的消息
+         * @returns {Promise<string>} AI的响应
+         */
+        async function sendToOllama(message) {
+            try {
+                // 构建包含知识库内容的提示
+                let prompt = "基于以下知识回答问题：\n\n";
+                // 将所有知识添加到提示中
+                knowledgeBase.forEach(item => {
+                    prompt += `${item.title}:\n${item.content}\n\n`;
+                });
+                prompt += `问题: ${message}\n回答:`;
+
+                // 发送请求到Ollama服务
+                const response = await fetch('http://localhost:11434/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: 'deepseek-r1:8b',
+                        prompt: prompt,
+                        stream: false
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('网络请求失败');
+                }
+
+                const data = await response.json();
+                return data.response;
+            } catch (error) {
+                console.error('Error:', error);
+                return '抱歉，我暂时无法回答。请检查Ollama服务是否正常运行。';
+            }
+        }
+
+        // 处理发送消息
+        async function handleSend() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // 添加用户消息
+            addMessage(message, true);
+            userInput.value = '';
+
+            // 添加加载动画
+            const loadingIndicator = addTypingIndicator();
+
+            // 获取AI响应
+            const response = await sendToOllama(message);
+
+            // 移除加载动画
+            loadingIndicator.remove();
+
+            // 添加AI响应
+            addMessage(response);
+        }
+
+        // 发送按钮点击事件
+        sendButton.addEventListener('click', handleSend);
+
+        // 输入框回车发送
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+
+        // 文件上传功能
+        const uploadFile = document.getElementById('uploadFile');
+        const fileUploadForm = document.getElementById('fileUploadForm');
+        const fileDropZone = document.getElementById('fileDropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+
+        // 切换文件上传表单显示
+        uploadFile.addEventListener('click', () => {
+            fileUploadForm.classList.toggle('active');
+            knowledgeForm.classList.remove('active');
+        });
+
+        // 文件拖放功能
+        fileDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileDropZone.classList.add('drag-over');
+        });
+
+        fileDropZone.addEventListener('dragleave', () => {
+            fileDropZone.classList.remove('drag-over');
+        });
+
+        fileDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileDropZone.classList.remove('drag-over');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileDropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', () => {
+            handleFiles(fileInput.files);
+        });
+
+        // 处理文件上传
+        async function handleFiles(files) {
+            for (const file of files) {
+                if (validateFile(file)) {
+                    await processFile(file);
+                }
+            }
+        }
+
+        // 验证文件
+        function validateFile(file) {
+            const allowedTypes = ['application/pdf', 'text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('不支持的文件格式！');
+                return false;
+            }
+            return true;
+        }
+
+        // 处理文件并提取文本
+        async function processFile(file) {
+            const fileItem = createFileListItem(file);
+            fileList.appendChild(fileItem);
+
+            try {
+                const text = await extractTextFromFile(file);
+                const knowledge = {
+                    id: Date.now(),
+                    title: `文件：${file.name}`,
+                    content: text,
+                    timestamp: new Date().toISOString()
+                };
+
+                knowledgeBase.push(knowledge);
+                localStorage.setItem('knowledgeBase', JSON.stringify(knowledgeBase));
+                renderKnowledgeList();
+
+                updateFileStatus(fileItem, 'success', '处理完成');
+            } catch (error) {
+                console.error('Error processing file:', error);
+                updateFileStatus(fileItem, 'error', '处理失败');
+            }
+        }
+
+        // 创建文件列表项
+        function createFileListItem(file) {
+            const div = document.createElement('div');
+            div.className = 'file-item';
+            div.innerHTML = `
+                <div class="file-item-info">
+                    <span class="file-item-name">${file.name}</span>
+                    <span class="file-item-size">${formatFileSize(file.size)}</span>
+                </div>
+                <div class="file-item-status">处理中...</div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill"></div>
+                </div>
+            `;
+            return div;
+        }
+
+        // 更新文件状态
+        function updateFileStatus(fileItem, status, message) {
+            const statusElement = fileItem.querySelector('.file-item-status');
+            statusElement.textContent = message;
+            statusElement.className = `file-item-status ${status}`;
+            const progressBar = fileItem.querySelector('.progress-bar-fill');
+            progressBar.style.width = '100%';
+        }
+
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 提取文件文本内容
+        async function extractTextFromFile(file) {
+            if (file.type === 'text/plain') {
+                return await file.text();
+            } else if (file.type === 'application/pdf') {
+                // 这里需要添加PDF解析库，比如pdf.js
+                return '暂不支持PDF解析';
+            } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                // 这里需要添加DOCX解析库，比如mammoth.js
+                return '暂不支持DOCX解析';
+            }
+            return '';
+        }
+    </script>
+</body>
+</html> 
