@@ -724,8 +724,9 @@
                     <div class="message bot">
                         <div class="avatar">AI</div>
                         <div class="message-content">
-                            <p>👋 你好！我是你的AI助手。我可以帮你解答问题、讨论想法或者提供建议。</p>
-                            <p>试着问我一些问题吧！</p>
+                            <p>👋 你好！我是基于 Deepseek 的 AI 助手。</p>
+                            <p>当前运行模式：<span id="runMode"></span></p>
+                            <p id="modeDescription"></p>
                         </div>
                     </div>
                 </div>
@@ -742,6 +743,24 @@
     </section>
 
     <script>
+        // 检查运行模式
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const runMode = document.getElementById('runMode');
+        const modeDescription = document.getElementById('modeDescription');
+
+        if (isLocalhost) {
+            runMode.textContent = '本地模式';
+            modeDescription.textContent = '在本地模式下，您可以使用所有功能，包括 AI 对话。试着问我一些问题吧！';
+        } else {
+            runMode.textContent = '在线预览模式';
+            modeDescription.innerHTML = '当前为在线预览模式。要使用 AI 对话功能，请按以下步骤操作：<br>' +
+                '1. 确保已安装并运行 Ollama<br>' +
+                '2. 确保已下载 Deepseek 模型（deepseek-r1:8b）<br>' +
+                '3. 克隆代码：<a href="https://github.com/ALiangNe/personal-blog" target="_blank">https://github.com/ALiangNe/personal-blog</a><br>' +
+                '4. 使用 VS Code 的 Live Server 插件运行网站<br>' +
+                '如果遇到问题，可以询问班级同学或查看部署文档。';
+        }
+
         // 轮播图功能
         const carousel = document.querySelector('.carousel-inner');
         const items = document.querySelectorAll('.carousel-item');
@@ -776,6 +795,14 @@
         const messages = document.getElementById('messages');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendMessage');
+
+        // 设置输入区域状态
+        if (!isLocalhost) {
+            userInput.placeholder = '请在本地环境运行以使用 AI 对话功能';
+            userInput.disabled = true;
+            sendButton.disabled = true;
+            sendButton.style.opacity = '0.5';
+        }
 
         // 添加消息到对话框
         function addMessage(content, isUser = false) {
@@ -1017,6 +1044,11 @@
 
         // 处理发送消息
         async function handleSend() {
+            if (!isLocalhost) {
+                addMessage('当前为在线预览模式，AI 对话功能仅在本地环境可用。请在本地环境中运行此网站以使用 AI 对话功能。');
+                return;
+            }
+
             const message = userInput.value.trim();
             if (!message) return;
 
@@ -1027,14 +1059,18 @@
             // 添加加载动画
             const loadingIndicator = addTypingIndicator();
 
-            // 获取AI响应
-            const response = await sendToOllama(message);
+            try {
+                // 获取AI响应
+                const response = await sendToOllama(message);
 
-            // 移除加载动画
-            loadingIndicator.remove();
-
-            // 添加AI响应
-            addMessage(response);
+                // 添加AI响应
+                addMessage(response);
+            } catch (error) {
+                addMessage('抱歉，发生了错误。请确保 Ollama 服务正在运行。');
+            } finally {
+                // 移除加载动画
+                loadingIndicator.remove();
+            }
         }
 
         // 发送按钮点击事件
