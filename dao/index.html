@@ -752,13 +752,11 @@
             runMode.textContent = '本地模式';
             modeDescription.textContent = '在本地模式下，您可以使用所有功能，包括 AI 对话。试着问我一些问题吧！';
         } else {
-            runMode.textContent = '在线预览模式';
-            modeDescription.innerHTML = '当前为在线预览模式。要使用 AI 对话功能，请按以下步骤操作：<br>' +
-                '1. 确保已安装并运行 Ollama<br>' +
-                '2. 确保已下载 Deepseek 模型（deepseek-r1:8b）<br>' +
-                '3. 克隆代码：<a href="https://github.com/ALiangNe/personal-blog" target="_blank">https://github.com/ALiangNe/personal-blog</a><br>' +
-                '4. 使用 VS Code 的 Live Server 插件运行网站<br>' +
-                '如果遇到问题，可以询问班级同学或查看部署文档。';
+            runMode.textContent = '在线模式';
+            modeDescription.innerHTML = '您可以直接使用 AI 对话功能，但需要确保：<br>' +
+                '1. 您的电脑上已安装并运行 Ollama<br>' +
+                '2. 已下载 Deepseek 模型（deepseek-r1:8b）<br>' +
+                '如果遇到问题，请确保 Ollama 服务正在运行。';
         }
 
         // 轮播图功能
@@ -984,28 +982,19 @@
             renderKnowledgeList();
         }
 
-        /**
-         * 修改发送消息到Ollama的函数，加入知识库内容
-         * @param {string} message - 用户输入的消息
-         * @returns {Promise<string>} AI的响应
-         */
+        // 发送消息到本地Deepseek服务
         async function sendToOllama(message) {
             try {
                 // 构建包含知识库内容的提示
                 let prompt = "基于以下知识回答问题：\n\n";
-                // 将所有知识添加到提示中
                 knowledgeBase.forEach(item => {
                     prompt += `${item.title}:\n${item.content}\n\n`;
                 });
                 prompt += `问题: ${message}\n回答:`;
 
-                // 检查是否在本地环境
-                const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                let response;
-
-                if (isLocalhost) {
-                    // 本地环境：直接调用 Ollama
-                    response = await fetch('http://localhost:11434/api/generate', {
+                // 首先尝试使用8b模型
+                try {
+                    const response8b = await fetch('http://localhost:11434/api/generate', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1016,39 +1005,46 @@
                             stream: false
                         })
                     });
-                } else {
-                    // 线上环境：调用 Vercel API
-                    response = await fetch('/api/chat', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ prompt })
-                    });
+
+                    if (response8b.ok) {
+                        const data = await response8b.json();
+                        return data.response;
+                    }
+                } catch (error8b) {
+                    console.log('8b模型不可用，尝试使用7b模型');
                 }
 
-                if (!response.ok) {
-                    throw new Error('请求失败');
+                // 如果8b不可用，尝试使用7b模型
+                const response7b = await fetch('http://localhost:11434/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: 'deepseek-r1:7b',
+                        prompt: prompt,
+                        stream: false
+                    })
+                });
+
+                if (!response7b.ok) {
+                    throw new Error('两个模型都不可用');
                 }
 
-                const data = await response.json();
-                return isLocalhost ? data.response : data.response;
+                const data = await response7b.json();
+                return data.response;
             } catch (error) {
                 console.error('Error:', error);
-                const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                return isLocalhost 
-                    ? '抱歉，我暂时无法回答。请检查 Ollama 服务是否正常运行。' 
-                    : '抱歉，我暂时无法回答。请稍后再试。';
+                return '抱歉，我暂时无法回答。请确保您的电脑上已启动 Deepseek 服务。\n\n' +
+                       '请检查：\n' +
+                       '1. 是否已安装 Ollama\n' +
+                       '2. 是否已下载 deepseek-r1:8b 或 deepseek-r1:7b 模型\n' +
+                       '3. Ollama 服务是否正在运行';
             }
         }
 
         // 处理发送消息
         async function handleSend() {
-            if (!isLocalhost) {
-                addMessage('当前为在线预览模式，AI 对话功能仅在本地环境可用。请在本地环境中运行此网站以使用 AI 对话功能。');
-                return;
-            }
-
             const message = userInput.value.trim();
             if (!message) return;
 
@@ -1062,11 +1058,10 @@
             try {
                 // 获取AI响应
                 const response = await sendToOllama(message);
-
                 // 添加AI响应
                 addMessage(response);
             } catch (error) {
-                addMessage('抱歉，发生了错误。请确保 Ollama 服务正在运行。');
+                addMessage('抱歉，发生了错误。请确保您的电脑上已启动 Ollama 服务。');
             } finally {
                 // 移除加载动画
                 loadingIndicator.remove();
