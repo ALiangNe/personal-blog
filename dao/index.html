@@ -724,9 +724,8 @@
                     <div class="message bot">
                         <div class="avatar">AI</div>
                         <div class="message-content">
-                            <p>👋 你好！我是基于 Deepseek 的 AI 助手。</p>
-                            <p>注意：AI 对话功能目前仅支持本地环境运行。如需使用此功能，请在本地环境中访问此页面。</p>
-                            <p>在本地环境中，我可以帮你解答问题、讨论想法或者提供建议。试着问我一些问题吧！</p>
+                            <p>👋 你好！我是你的AI助手。我可以帮你解答问题、讨论想法或者提供建议。</p>
+                            <p>试着问我一些问题吧！</p>
                         </div>
                     </div>
                 </div>
@@ -965,13 +964,6 @@
          */
         async function sendToOllama(message) {
             try {
-                // 检查是否在本地环境
-                const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                
-                if (!isLocalhost) {
-                    return '抱歉，AI 对话功能目前仅支持本地环境运行。请在本地环境（使用 localhost）访问此页面以使用 AI 对话功能。\n\n如需在本地运行，请：\n1. 克隆代码库\n2. 安装并运行 Ollama\n3. 使用本地服务器（如 Live Server）运行网站';
-                }
-
                 // 构建包含知识库内容的提示
                 let prompt = "基于以下知识回答问题：\n\n";
                 // 将所有知识添加到提示中
@@ -980,28 +972,46 @@
                 });
                 prompt += `问题: ${message}\n回答:`;
 
-                // 发送请求到Ollama服务
-                const response = await fetch('http://localhost:11434/api/generate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        model: 'deepseek-r1:8b',
-                        prompt: prompt,
-                        stream: false
-                    })
-                });
+                // 检查是否在本地环境
+                const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                let response;
+
+                if (isLocalhost) {
+                    // 本地环境：直接调用 Ollama
+                    response = await fetch('http://localhost:11434/api/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            model: 'deepseek-r1:8b',
+                            prompt: prompt,
+                            stream: false
+                        })
+                    });
+                } else {
+                    // 线上环境：调用 Vercel API
+                    response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ prompt })
+                    });
+                }
 
                 if (!response.ok) {
-                    throw new Error('网络请求失败');
+                    throw new Error('请求失败');
                 }
 
                 const data = await response.json();
-                return data.response;
+                return isLocalhost ? data.response : data.response;
             } catch (error) {
                 console.error('Error:', error);
-                return '抱歉，我暂时无法回答。请检查 Ollama 服务是否正常运行，并确保您在本地环境中访问此页面。';
+                const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                return isLocalhost 
+                    ? '抱歉，我暂时无法回答。请检查 Ollama 服务是否正常运行。' 
+                    : '抱歉，我暂时无法回答。请稍后再试。';
             }
         }
 
