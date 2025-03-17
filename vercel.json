@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "mkdir -p public && cp -r dao/* public/",
+  "buildCommand": "mkdir -p public/images && cp -r dao/* public/ && echo \"Creating public directory structure\"",
   "outputDirectory": "public",
   "routes": [
     { "handle": "filesystem" },
