@@ -3,5 +3,6 @@
   "routes": [
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/dao/index.html" }
-  ]
+  ],
+  "buildCommand": "mkdir -p public/css public/js public/images && cp dao/public/css/styles.css public/css/ && cp dao/public/js/scripts.js public/js/ && cp -r dao/public/images/* public/images/ || true"
 } 
