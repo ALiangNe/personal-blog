@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客 - 个人博客</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .blog-section {
+            padding: 2rem 0;
+        }
+        
+        .blog-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .blog-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .blog-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .blog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .blog-card:hover .blog-image img {
+            transform: scale(1.05);
+        }
+        
+        .blog-content {
+            padding: 1.5rem;
+        }
+        
+        .blog-date {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .blog-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: #2c3e50;
+        }
+        
+        .blog-excerpt {
+            color: #555;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .blog-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .blog-tag {
+            background: #f0f0f0;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        
+        .blog-read-more {
+            display: inline-block;
+            color: #007bff;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .blog-read-more:hover {
+            text-decoration: underline;
+        }
+        
+        .blog-categories {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .category-button {
+            background: #f0f0f0;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem 0.5rem 0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .category-button:hover,
+        .category-button.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="about.html">关于我</a>
+            <a href="blog.html">博客</a>
+            <a href="contact.html">联系我</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="blog-section">
+            <div class="blog-header">
+                <h1>我的博客</h1>
+                <p>分享我的技术见解、项目经验和生活感悟</p>
+            </div>
+            
+            <div class="blog-categories">
+                <button class="category-button active">全部</button>
+                <button class="category-button">区块链</button>
+                <button class="category-button">Web开发</button>
+                <button class="category-button">设计</button>
+                <button class="category-button">生活</button>
+            </div>
+            
+            <div class="blog-grid">
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="https://picsum.photos/600/400?random=1" alt="博客图片">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date">2023年12月15日</div>
+                        <h2 class="blog-title">区块链技术如何改变金融行业</h2>
+                        <div class="blog-tags">
+                            <span class="blog-tag">区块链</span>
+                            <span class="blog-tag">金融科技</span>
+                        </div>
+                        <p class="blog-excerpt">随着区块链技术的不断发展，传统金融行业正在经历一场深刻的变革。本文将探讨区块链如何影响金融服务、支付系统和资产管理...</p>
+                        <a href="#" class="blog-read-more">阅读更多</a>
+                    </div>
+                </article>
+                
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="https://picsum.photos/600/400?random=2" alt="博客图片">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date">2023年11月28日</div>
+                        <h2 class="blog-title">React 18新特性详解</h2>
+                        <div class="blog-tags">
+                            <span class="blog-tag">Web开发</span>
+                            <span class="blog-tag">React</span>
+                            <span class="blog-tag">前端</span>
+                        </div>
+                        <p class="blog-excerpt">React 18带来了许多令人兴奋的新特性，包括并发渲染、自动批处理和Suspense的改进。本文将深入分析这些新特性...</p>
+                        <a href="#" class="blog-read-more">阅读更多</a>
+                    </div>
+                </article>
+                
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="https://picsum.photos/600/400?random=3" alt="博客图片">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date">2023年10月10日</div>
+                        <h2 class="blog-title">智能合约安全性最佳实践</h2>
+                        <div class="blog-tags">
+                            <span class="blog-tag">区块链</span>
+                            <span class="blog-tag">智能合约</span>
+                            <span class="blog-tag">安全</span>
+                        </div>
+                        <p class="blog-excerpt">随着DeFi项目的流行，智能合约安全问题变得尤为重要。本文总结了我在开发过程中积累的经验，分享智能合约安全的最佳实践...</p>
+                        <a href="#" class="blog-read-more">阅读更多</a>
+                    </div>
+                </article>
+                
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="https://picsum.photos/600/400?random=4" alt="博客图片">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date">2023年9月18日</div>
+                        <h2 class="blog-title">设计师如何与开发者高效协作</h2>
+                        <div class="blog-tags">
+                            <span class="blog-tag">设计</span>
+                            <span class="blog-tag">团队协作</span>
+                        </div>
+                        <p class="blog-excerpt">作为既是设计师又是开发者的从业者，我总结了一些提高设计和开发团队协作效率的经验和工具，帮助项目更顺利地进行...</p>
+                        <a href="#" class="blog-read-more">阅读更多</a>
+                    </div>
+                </article>
+                
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="https://picsum.photos/600/400?random=5" alt="博客图片">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date">2023年8月25日</div>
+                        <h2 class="blog-title">我的极简工作环境搭建</h2>
+                        <div class="blog-tags">
+                            <span class="blog-tag">生活</span>
+                            <span class="blog-tag">工作效率</span>
+                        </div>
+                        <p class="blog-excerpt">一个舒适高效的工作环境对于提升工作效率至关重要。本文分享我如何打造一个专注且高效的工作空间，包括硬件设备和软件工具...</p>
+                        <a href="#" class="blog-read-more">阅读更多</a>
+                    </div>
+                </article>
+                
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="https://picsum.photos/600/400?random=6" alt="博客图片">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date">2023年7月12日</div>
+                        <h2 class="blog-title">Web3应用开发实战指南</h2>
+                        <div class="blog-tags">
+                            <span class="blog-tag">区块链</span>
+                            <span class="blog-tag">Web3</span>
+                            <span class="blog-tag">教程</span>
+                        </div>
+                        <p class="blog-excerpt">从零开始构建一个完整的Web3应用，涵盖前端界面、智能合约开发和测试部署的全过程。适合想要入门Web3开发的开发者...</p>
+                        <a href="#" class="blog-read-more">阅读更多</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html> 
