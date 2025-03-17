@@ -1,8 +1,9 @@
 {
   "version": 2,
+  "buildCommand": "mkdir -p public && cp -r dao/* public/",
+  "outputDirectory": "public",
   "routes": [
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
-  ],
-  "buildCommand": "cp -r dao/* . && mkdir -p public/css public/js public/images && cp dao/public/css/styles.css public/css/ && cp dao/public/js/scripts.js public/js/ && cp -r dao/public/images/* public/images/ || true"
+  ]
 } 
