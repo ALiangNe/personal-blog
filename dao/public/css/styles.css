@@ -581,4 +581,13 @@ body {
     background: #007bff;
     width: 0;
     transition: width 0.3s ease;
+}
+
+/* 地图样式修复 */
+.map-container iframe {
+    width: 100% !important;
+    height: 400px !important;
+    border: none !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 } 
